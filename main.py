@@ -10,7 +10,7 @@ from stop_words import get_stop_words
 
 
 search_by = str(input('Введите слово/словосочетание: '))
-shape_image_url = str(input('Введите ссылку на картинку, в форме которой будет облако: '))
+is_custom = str(input('Хотите задать форму облака? (Да/Нет): '))
 
 wikipedia.set_lang('ru')
 
@@ -25,30 +25,37 @@ text = re.sub(r'==.*?==+', '', text)
 text = text.replace('\n', '')
 
 
-# def plot_cloud(wordcloud):
-#     plt.figure(figsize=(40, 30))
-#     plt.imshow(wordcloud)
-#     plt.axis('off')
-
-
-
 if __name__ == '__main__':
-    fetch_image(shape_image_url)
+    if is_custom == "Да":
+        shape_image_url = str(input('Введите ссылку на картинку, в форме которой будет облако: '))
+        fetch_image(shape_image_url)
+        shape = np.array(Image.open('media/mask.png'))
+        wordcloud = WordCloud(
+                            width=1900, 
+                            height=1500, 
+                            random_state=1, 
+                            background_color='black', 
+                            margin=20, 
+                            colormap='Pastel1', 
+                            collocations=False,
+                            stopwords=get_stop_words('russian'),
+                            mask=shape).generate(text)
+    else:
+        wordcloud = WordCloud(
+                            width=1900, 
+                            height=1500, 
+                            random_state=1, 
+                            background_color='black', 
+                            margin=20, 
+                            colormap='Pastel1', 
+                            collocations=False,
+                            stopwords=get_stop_words('russian')).generate(text)
     
-    shape = np.array(Image.open('media/mask.png'))
-
-    wordcloud = WordCloud(width=2000, 
-                      height=1500, 
-                      random_state=1, 
-                      background_color='black', 
-                      margin=20, 
-                      colormap='Pastel1', 
-                      collocations=False, 
-                      stopwords=get_stop_words('russian'),
-                      mask=shape).generate(text)
-
     plot_cloud(wordcloud)
     wordcloud.to_file('media/your_wordcloud.png')
 
-    os.remove("media/mask.png")
-    print("Готово! Картинка ждет Вас в папке 'media' ")
+    try:
+        os.remove("media/mask.png")
+    except FileNotFoundError:
+        None
+    print("Готово! Картинка ждет Вас в папке 'media'")
