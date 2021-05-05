@@ -142,3 +142,4 @@ pyvenv.cfg
 your_wordcloud.png
 mask.png
 media/
+.DS_Store
