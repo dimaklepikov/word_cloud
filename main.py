@@ -1,45 +1,54 @@
 import os, sys
 import wikipedia
 import re
-import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
 from wordcloud import WordCloud
+from mask import fetch_image
+from word_cloud import plot_cloud
 from stop_words import get_stop_words
 
-wikipedia.set_lang('ru')
-STOPWORDS_RU = get_stop_words('russian')
 
 search_by = str(input('Введите слово/словосочетание: '))
+shape_image_url = str(input('Введите ссылку на картинку, в форме которой будет облако: '))
 
+wikipedia.set_lang('ru')
 
 try:
     wiki = wikipedia.page(search_by)
 except wikipedia.exceptions.PageError:
     print('Слишком тредно собрать информацию, введите запрос точнее')
-    # exit()
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-
 text = wiki.content
-
 text = re.sub(r'==.*?==+', '', text)
 text = text.replace('\n', '')
 
 
-def plot_cloud(wordcloud):
-    plt.figure(figsize=(40, 30))
-    plt.imshow(wordcloud)
-    plt.axis('off')
+# def plot_cloud(wordcloud):
+#     plt.figure(figsize=(40, 30))
+#     plt.imshow(wordcloud)
+#     plt.axis('off')
 
 
-wordcloud = WordCloud(width=2000, 
+
+if __name__ == '__main__':
+    fetch_image(shape_image_url)
+    
+    shape = np.array(Image.open('media/mask.png'))
+
+    wordcloud = WordCloud(width=2000, 
                       height=1500, 
                       random_state=1, 
                       background_color='black', 
                       margin=20, 
                       colormap='Pastel1', 
                       collocations=False, 
-                      stopwords=STOPWORDS_RU).generate(text)
+                      stopwords=get_stop_words('russian'),
+                      mask=shape).generate(text)
 
-if __name__ == '__main__':
     plot_cloud(wordcloud)
-    wordcloud.to_file('your_wordcloud.png')
+    wordcloud.to_file('media/your_wordcloud.png')
+
+    os.remove("media/mask.png")
+    print("Готово! Картинка ждет Вас в папке 'media' ")

@@ -140,3 +140,4 @@ cython_debug/
 .vscode
 pyvenv.cfg
 your_wordcloud.png
+mask.png
