@@ -1,0 +1,6 @@
+wikipedia
+stop-words
+Pillow
+requests
+wordcloud
+stop-words
