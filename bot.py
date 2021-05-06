@@ -17,7 +17,10 @@ def telegram_bot(token):
     @bot.message_handler(commands=["yes"])
     def start_message(message):
         try:
-            bot.send_message(message.chat.id, "Отлично, напишите мне слово или словосочетание (Любимый фильм/музыкант/автомобиль - что угодно!) Пойдем дальше? (/next)")
+            bot.send_message(message.chat.id, 
+            """Отлично, напишите мне слово или словосочетание (Любимый фильм/музыкант/автомобиль - что угодно!), начиная со слова 'Поиск' (Поиск - .........)
+            Пойдем дальше? (/next)"""
+            )
         except Exception as ex:
             print(ex)
             bot.send_message(message.chat.id, "Что-то пошло не так((")
@@ -33,7 +36,13 @@ def telegram_bot(token):
     @bot.message_handler(commands=["next"])
     def start_message(message):
         try:
-            bot.send_message(message.chat.id, "Пришлите мне ссылку на картинку, которая ")
+            bot.send_message(message.chat.id, 
+            """
+            Пришлите мне ссылку на картинку, в форме которой будет облако
+
+
+            Совет! Для лучшего результата возьмити картинку с белым фоном и черный объектом на нем
+            """)
         except Exception as ex:
             print(ex)
             bot.send_message(message.chat.id, "Что-то пошло не так((")    
@@ -47,8 +56,19 @@ def telegram_bot(token):
             except Exception as ex:
                 print(ex)
                 bot.send_message(message.chat.id, "Что-то пошло не так((")
-        # if message.text not in YES_WORDS + NO_WORDS:
-        #     bot.send_message(message.chat.id, "К сожалению, я не понимаю. Начнем сначала? (/start)")
+
+    @bot.message_handler(content_types=["text"])
+    def send_wordcloud(message):
+        a = message.text
+        bot.send_message(f"Ты написал: {a}", chat_id=message.from_user.id)   
+        # if "Поиск" in str(message.text):
+        #     try:
+        #         to_search = message.text.split('-')
+        #         print(to_search)
+        #         bot.send_message(message.chat.id, "Окей. Если надумаете, перезапустите меня командой /start")
+        #     except Exception as ex:
+        #         print(ex)
+        #         bot.send_message(message.chat.id, "Что-то пошло не так((")
 
     while True:
         try:

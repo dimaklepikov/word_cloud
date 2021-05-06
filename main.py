@@ -9,20 +9,42 @@ from word_cloud import plot_cloud
 from stop_words import get_stop_words
 
 
-search_by = str(input('Введите слово/словосочетание: '))
-is_custom = str(input('Хотите задать форму облака? (Да/Нет): '))
+# search_by = str(input('Введите слово/словосочетание: '))
+# is_custom = str(input('Хотите задать форму облака? (Да/Нет): '))
 
-wikipedia.set_lang('ru')
+# wikipedia.set_lang('ru')
 
-try:
-    wiki = wikipedia.page(search_by)
-except wikipedia.exceptions.PageError:
-    print('Слишком тредно собрать информацию, введите запрос точнее')
-    os.execl(sys.executable, sys.executable, *sys.argv)
+# try:
+#     wiki = wikipedia.page(search_by)
+# except wikipedia.exceptions.PageError:
+#     print('Слишком тредно собрать информацию, введите запрос точнее')
+#     os.execl(sys.executable, sys.executable, *sys.argv)
 
-text = wiki.content
-text = re.sub(r'==.*?==+', '', text)
-text = text.replace('\n', '')
+
+
+
+def get_wordcloud(search_by, shape=None):
+    try:
+        wikipedia.set_lang('ru')
+        wiki = wikipedia.page(search_by)
+    except wikipedia.exceptions.PageError:
+        print('Слишком тредно собрать информацию, введите запрос точнее')
+        os.execl(sys.executable, sys.executable, *sys.argv)
+
+    text = wiki.content
+    text = re.sub(r'==.*?==+', '', text)
+    text = text.replace('\n', '')
+
+    return WordCloud(
+        width=1900, 
+        height=1500, 
+        random_state=1, 
+        background_color='black', 
+        margin=20, 
+        colormap='Pastel1', 
+        collocations=False,
+        stopwords=get_stop_words('russian'),
+        mask=shape).generate(text)
 
 
 if __name__ == '__main__':
