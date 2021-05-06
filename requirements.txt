@@ -4,3 +4,7 @@ Pillow
 requests
 wordcloud
 stop-words
+python-decouple
+wheel
+telebot
+PyTelegramBotAPI==2.2.3
